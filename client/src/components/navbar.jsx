@@ -21,7 +21,7 @@ const drawerWidth = 240;
 // Create navItems with name and path as key-value pairs
 const navItems = [
   { name: 'Home', path: '/' },
-  { name: 'Bookings', path: '/myBookings/67986aedc81681ecac318c38' },
+  { name: 'My Bookings', path: '/myBookings/67986aedc81681ecac318c38' },
   { name: 'Logout', path: '/logout' },
 ];
 
