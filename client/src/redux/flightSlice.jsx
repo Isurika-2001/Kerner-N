@@ -2,6 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import config from '../config';
 
 export const flightSlice = createSlice({
     name: 'flight',
@@ -43,7 +44,7 @@ export const { getFlights, getFlightsSuccess, getFlightsFailed, addFlight, addFl
 export const fetchFlights = (departureCity, arrivalCity) => async (dispatch) => {
     dispatch(getFlights());
     try {
-        const response = await axios.get(`/flight?departureCity=${departureCity}&arrivalCity=${arrivalCity}`);
+        const response = await axios.get(`${config.API_URL}/flights?departureCity=${departureCity}&arrivalCity=${arrivalCity}`);
         dispatch(getFlightsSuccess(response.data));
     } catch (error) {
         dispatch(getFlightsFailed(error.message));
