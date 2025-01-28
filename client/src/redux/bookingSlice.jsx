@@ -44,7 +44,7 @@ export const { getBookings, getBookingsSuccess, getBookingsFailed, bookFlight, b
 export const fetchBookings = (userId) => async (dispatch) => {
     dispatch(getBookings());
     try {
-        const response = await axios.get(`${config.API_URL}/bookings/${userId}`);
+        const response = await axios.get(`${config.API_URL}/bookings?userId=${userId}`);
         dispatch(getBookingsSuccess(response.data));
     } catch (error) {
         dispatch(getBookingsFailed(error.message));

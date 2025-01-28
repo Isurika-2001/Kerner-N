@@ -1,91 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { Box, TextField, Button, LinearProgress } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Button, Typography, LinearProgress } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFlights } from '../redux/flightSlice';
+import { fetchBookings } from '../redux/bookingSlice';
+import { useParams } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 const MyBookings = () => {
   const dispatch = useDispatch();
-  const { flights, loading, error } = useSelector((state) => state.flight);
-
-  const [departureCity, setDepartureCity] = useState('');
-  const [arrivalCity, setArrivalCity] = useState('');
-
-  useEffect(() => {
-    dispatch(fetchFlights());
-  }, [dispatch]);
-
-  const handleSearch = () => {
-    if (departureCity && arrivalCity) {
-      dispatch(fetchFlights(departureCity, arrivalCity));
-    }
+  const { bookings, loading, error } = useSelector((state) => state.booking);
+  const { userId } = useParams(); 
+  
+  const Toast = swal.mixin({
+    toast: true,
+    position: 'top',
+    iconColor: 'white',
+    customClass: {
+      popup: 'colored-toast',
+    },
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true,
+  });
+  
+  const errorMessage = () => {
+    Toast.fire({
+      title: 'Search Failed!',
+      text: 'Error while loading.',
+      icon: 'error',
+      background: '#f44336',
+      color: 'white',
+    });
   };
 
   const columns = [
-    { field: 'flightNumber', headerName: 'Flight Number', width: 150, flex: 1 },
-    { field: 'departureCity', headerName: 'Departure City', width: 150, flex: 1 },
-    { field: 'arrivalCity', headerName: 'Arrival City', width: 150, flex: 1 },
-    { field: 'departureTime', headerName: 'Departure Time', width: 200, flex: 2 },
-    { field: 'arrivalTime', headerName: 'Arrival Time', width: 200, flex: 2 },
-    { field: 'price', headerName: 'Price ($)', width: 100, flex: 1 },
-    { field: 'seatsAvailable', headerName: 'Seats Available', width: 150, flex: 1 },
-    // action button to book a flight
-    {
-      field: 'book',
-      headerName: 'Book Flight',
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          // onclick navigate to the booking page
-          onClick={() => {
-            console.log(params.row.id);
-          }}
-        >
-          Book
-        </Button>
-      ),
-    },
+    { field: 'id', headerName: 'Booking ID', width: 150 },
+    { field: 'flightId', headerName: 'Flight ID', width: 150 },
+    { field: 'departureCity', headerName: 'Departure City', width: 180 },
+    { field: 'arrivalCity', headerName: 'Arrival City', width: 180 },
+    { field: 'seats', headerName: 'Seats', width: 100 },
+    { field: 'bookingDate', headerName: 'Booking Date', width: 180 },
   ];
 
-  const rows = flights.map((flight) => ({
-    id: flight._id, 
-    flightNumber: flight.flightNumber,
-    departureCity: flight.departureCity,
-    arrivalCity: flight.arrivalCity,
-    departureTime: new Date(flight.departureTime).toLocaleString(),
-    arrivalTime: new Date(flight.arrivalTime).toLocaleString(),
-    price: flight.price,
-    seatsAvailable: flight.seatsAvailable,
+  const rows = bookings.map((booking) => ({
+    id: booking._id,
+    flightId: booking.flightId._id,
+    departureCity: booking.flightId.departureCity,
+    arrivalCity: booking.flightId.arrivalCity,
+    seats: booking.seats,
+    bookingDate: new Date(booking.bookingDate).toLocaleString(),
   }));
+  
+  useEffect(() => {
+    // Fetch bookings for the user when the component mounts
+    if (userId) {
+      dispatch(fetchBookings(userId)); 
+
+      if (error) {
+        errorMessage();
+      }
+    }
+  }, [dispatch, userId]);
 
   return (
     <Box sx={{ padding: 4 }}>
-      <h1>My Bookings</h1>
-
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 4 }}>
-        <TextField
-          label="Departure City"
-          value={departureCity}
-          onChange={(e) => setDepartureCity(e.target.value)}
-        />
-        <TextField
-          label="Arrival City"
-          value={arrivalCity}
-          onChange={(e) => setArrivalCity(e.target.value)}
-        />
-        <Button variant="contained" onClick={handleSearch}>
-          Search Flights
-        </Button>
-      </Box>
+      <h1>
+        My Bookings
+      </h1>
 
       {loading ? (
-        <p><LinearProgress /></p>
-      ) : error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+          <LinearProgress />
+        </Box>
+      ): (
         <Box sx={{ height: 400, width: '100%' }}>
           <DataGrid
             rows={rows}

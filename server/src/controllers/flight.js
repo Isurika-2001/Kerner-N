@@ -4,6 +4,11 @@ const flightModel = require('../models/flight');
 async function getFlights(req, res) {
     try {
         const { departureCity, arrivalCity } = req.query;
+
+        // ignore case when searching for departure and arrival city
+        departureCity = new RegExp(departureCity, 'i');
+        arrivalCity = new RegExp(arrivalCity, 'i');
+
         const flights = await flightModel.find({ departureCity, arrivalCity });
         res.json(flights);
     } catch (error) {

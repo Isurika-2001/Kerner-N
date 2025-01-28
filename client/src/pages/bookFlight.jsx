@@ -18,7 +18,7 @@ const BookFlight = () => {
   // Initialize SweetAlert2 toast settings
   const Toast = swal.mixin({
     toast: true,
-    position: 'center',
+    position: 'bottom-end',
     iconColor: 'white',
     customClass: {
       popup: 'colored-toast',

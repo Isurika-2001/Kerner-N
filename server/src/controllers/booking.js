@@ -3,8 +3,13 @@ const BookingSchema = require('../models/booking');
 // get bookings based on user id
 async function getBookings(req, res) {
     try {
-        const { userId } = req.params;
-        const bookings = await BookingSchema.find({ userId });
+        const { userId } = req.query;
+        
+        // Find bookings and populate userId and flightId
+        const bookings = await BookingSchema.find({ userId })
+            .populate('userId', 'name email')
+            .populate('flightId', 'departureCity arrivalCity');
+        
         res.json(bookings);
     }
     catch (error) {
