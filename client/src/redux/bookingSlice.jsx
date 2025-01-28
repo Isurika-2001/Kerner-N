@@ -2,6 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import config from '../config';
 
 export const bookingSlice = createSlice({
     name: 'booking',
@@ -43,7 +44,7 @@ export const { getBookings, getBookingsSuccess, getBookingsFailed, bookFlight, b
 export const fetchBookings = (userId) => async (dispatch) => {
     dispatch(getBookings());
     try {
-        const response = await axios.get(`/booking/${userId}`);
+        const response = await axios.get(`${config.API_URL}/bookings/${userId}`);
         dispatch(getBookingsSuccess(response.data));
     } catch (error) {
         dispatch(getBookingsFailed(error.message));
@@ -53,7 +54,7 @@ export const fetchBookings = (userId) => async (dispatch) => {
 export const bookAFlight = (bookingData) => async (dispatch) => {
     dispatch(bookFlight());
     try {
-        const response = await axios.post('/booking', bookingData);
+        const response = await axios.post(`${config.API_URL}/bookings`, bookingData);
         dispatch(bookFlightSuccess(response.data));
     } catch (error) {
         dispatch(bookFlightFailed(error.message));

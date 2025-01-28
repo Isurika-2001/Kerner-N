@@ -3,13 +3,38 @@ import { Box, TextField, Button, LinearProgress } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFlights } from '../redux/flightSlice';
+import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 const FlightsPage = () => {
   const dispatch = useDispatch();
   const { flights, loading, error } = useSelector((state) => state.flight);
+  const navigate = useNavigate();
 
   const [departureCity, setDepartureCity] = useState('');
   const [arrivalCity, setArrivalCity] = useState('');
+
+  const Toast = swal.mixin({
+      toast: true,
+      position: 'top',
+      iconColor: 'white',
+      customClass: {
+        popup: 'colored-toast',
+      },
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+    });
+
+  const errorMessage = () => {
+    Toast.fire({
+      title: 'Search Failed!',
+      text: 'Please enter both departure and arrival cities.',
+      icon: 'error',
+      background: '#f44336',
+      color: 'white',
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchFlights());
@@ -18,6 +43,10 @@ const FlightsPage = () => {
   const handleSearch = () => {
     if (departureCity && arrivalCity) {
       dispatch(fetchFlights(departureCity, arrivalCity));
+    }
+
+    else {
+      errorMessage();
     }
   };
 
@@ -39,9 +68,9 @@ const FlightsPage = () => {
           variant="contained"
           color="primary"
           size="small"
-          // onclick navigate to the booking page
+          // onclick navigate to the booking page with the flight id
           onClick={() => {
-            console.log(params.row.id);
+            navigate(`/bookFlight/${params.row.id}/${params.row.departureCity}/${params.row.arrivalCity}`);
           }}
         >
           Book
@@ -83,8 +112,6 @@ const FlightsPage = () => {
 
       {loading ? (
         <p><LinearProgress /></p>
-      ) : error ? (
-        <p style={{ color: 'red' }}>{error}</p>
       ) : (
         <Box sx={{ height: 400, width: '100%' }}>
           <DataGrid

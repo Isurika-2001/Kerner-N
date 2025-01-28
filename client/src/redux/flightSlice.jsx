@@ -54,7 +54,7 @@ export const fetchFlights = (departureCity, arrivalCity) => async (dispatch) => 
 export const addNewFlight = (flightData) => async (dispatch) => {
     dispatch(addFlight());
     try {
-        const response = await axios.post('/flight', flightData);
+        const response = await axios.post(`${config.API_URL}/flight`, flightData);
         dispatch(addFlightSuccess(response.data));
     } catch (error) {
         dispatch(addFlightFailed(error.message));

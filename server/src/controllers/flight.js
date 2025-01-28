@@ -25,5 +25,5 @@ async function addFlight(req, res) {
 
 module.exports = {
     getFlights,
-    addFlight
+    addFlight,
 };
