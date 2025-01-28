@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import config from '../config';
 
 export const userSlice = createSlice({
     name: 'user',
@@ -58,7 +59,7 @@ export const {
 export const registerUser = (userData) => async (dispatch) => {
     dispatch(register());
     try {
-        const response = await axios.post('/auth/register', userData);
+        const response = await axios.post(`${config.API_URL}/auth/register`, userData);
         dispatch(registerSuccess(response.data.token)); // Pass only the token
     } catch (error) {
         dispatch(registerFailed(error.message));
@@ -69,7 +70,7 @@ export const registerUser = (userData) => async (dispatch) => {
 export const loginUser = (userData) => async (dispatch) => {
     dispatch(login());
     try {
-        const response = await axios.post('/auth/login', userData);
+        const response = await axios.post(`${config.API_URL}/auth/login`, userData);
         dispatch(loginSuccess(response.data.token)); // Pass only the token
     } catch (error) {
         dispatch(loginFailed(error.message));
