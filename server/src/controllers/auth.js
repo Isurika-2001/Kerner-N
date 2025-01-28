@@ -13,7 +13,9 @@ async function register(req, res) {
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = new UserSchema({ username, email, password: hashedPassword });
         await user.save();
-        res.json(user);
+        // login after registration
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        res.json({ token });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
